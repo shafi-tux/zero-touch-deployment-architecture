@@ -7,8 +7,8 @@ services:
     expose:
       - "8000"
     restart: always
-    depends_on:
-      - cache
+    environmnt:
+      - REDIS_HOST = ${REDIS_HOST}
 
   nginx:
     image: nginx:latest
@@ -19,9 +19,3 @@ services:
       - "80:80"
     depends_on:
       - web
-      - cache
-
-  cache:
-    image: redis:alpine
-    container_name: redis_cache
-    restart: always

@@ -8,9 +8,9 @@ from pathlib import Path
 START_TIME = time.time()
 BASE_DIR = Path(__file__).resolve().parent
 
-# Connect to Redis using Docker Compose's internal DNS. 
-# 'cache' resolves to the Redis container's IP.
-cache = redis.Redis(host='cache', port=6379, db=0, decode_responses=True)
+# Ask the OS for the REDIS_HOST variable. If it's missing, default to 'localhost'
+redis_ip = os.environ.get('REDIS_HOST', 'localhost')
+cache = redis.Redis(host=redis_ip, port=6379, db=0, decode_responses=True)
 
 class AppHandler(BaseHTTPRequestHandler):
     def do_GET(self):

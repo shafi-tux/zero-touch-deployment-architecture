@@ -17,10 +17,13 @@ jobs:
 
         - name: ssh deployment to aws instance
           uses: appleboy/ssh-action@v1
+          env:
+            REDIS_HOST = ${{secrets.REDIS_HOST}}
           with:
             host: ${{ secrets.EC2_HOST }}
             username: ${{ secrets.EC2_USERNAME }}
             key: ${{ secrets.EC2_SSH_KEY }}
+            envs: REDIS_HOST
             script: |
               cloud-init status --wait
               if [ ! -d ~/zero-touch-deployment-architecture ]
@@ -29,4 +32,5 @@ jobs:
               fi
               cd ~/zero-touch-deployment-architecture
               git pull origin main
+              echo "REDIS_HOST=$REDIS_HOST" > .env
               docker compose up --detach --build
