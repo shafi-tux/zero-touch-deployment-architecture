@@ -18,7 +18,7 @@ jobs:
         - name: ssh deployment to aws instance
           uses: appleboy/ssh-action@v1
           env:
-            REDIS_HOST = ${{secrets.REDIS_HOST}}
+            REDIS_HOST: ${{secrets.REDIS_HOST}}
           with:
             host: ${{ secrets.EC2_HOST }}
             username: ${{ secrets.EC2_USERNAME }}
