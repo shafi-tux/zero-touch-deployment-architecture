@@ -7,7 +7,7 @@ services:
     expose:
       - "8000"
     restart: always
-    environmnt:
+    environment:
       - REDIS_HOST = ${REDIS_HOST}
 
   nginx:
