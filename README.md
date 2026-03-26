@@ -42,42 +42,35 @@ flowchart LR
   Internet((Internet)) -->|HTTP: 80| IGW
   GH -. SSH & Env Injection .-> WebEC2
 ```
-# 🛠 Core Competencies & Technologies Demonstrated
-1. **Infrastructure as Code (Terraform)**
+#Core Engineering Competencies
+1. Network Segmentation & Zero-Trust Security (AWS/Terraform)
 
-    Custom VPC Networking: Abandoned the default AWS network to architect a custom VPC with dedicated public subnets, internet gateways, and custom route tables.
+    Custom VPC: Architected a Virtual Private Cloud with public (10.0.1.0/24) and private (10.0.2.0/24) subnets to strictly control traffic flow.
 
-    Zero-Trust Security: Configured strict Security Groups acting as virtual firewalls to restrict ingress traffic to only required ports (HTTP 80, SSH 22).
+    The "Vault" Architecture: Isolated the Redis database in a private subnet with no inbound internet access. Outbound internet access for OS updates is routed securely through a NAT Gateway.
 
-    Automated Bootstrapping: Utilized user_data to inject bash scripts (setup.sh) during the EC2 boot sequence, ensuring the host is provisioned with Docker and Git before the first login.
+    Security Group Chaining: Implemented Zero-Trust security rules. The database Security Group strictly drops all traffic except packets originating directly from the Web Server's specific Security Group ID.
 
-    State Management: Handled infrastructure drift, immutable server replacements, and Elastic IP (Static Anchor) associations.
+    Bastion Host Routing: Utilized the public Web Server as a Jump Box to securely SSH into the private database server for system-level debugging.
 
-2. **Continuous Integration & Deployment (GitHub Actions)**
+2. CI/CD Pipeline & Secret Injection (GitHub Actions)
 
-    Automated Workflows: Engineered a YAML-based CI/CD pipeline that triggers on git push to the main branch.
+    Zero-Touch Deployment: Engineered a workflow that triggers on main branch pushes, SSHes into the Web Server, pulls the latest code, and orchestrates Docker Compose.
 
-    Race Condition Mitigation: Implemented cloud-init status --wait to ensure the AWS bootstrapping phase completes before the deployment runner attempts to execute code.
+    Dynamic Environment Variables: Pipeline dynamically injects the private IP of the AWS Database server into a .env file at runtime, ensuring the Python container connects securely across the VPC network without hardcoding IPs in the repository.
 
-    Secret Management: Utilized GitHub Secrets to securely pass SSH keys and host IPs to the runner, keeping credentials out of version control.
+3. Container Orchestration & Reverse Proxying (Docker)
 
-3. **Container Orchestration & Networking (Docker)**
+    Distributed Services: Split the docker-compose.yml logic to manage services across multiple physical EC2 hosts.
 
-    Multi-Container Environments: Managed a multi-service architecture (Web, Cache, Proxy) using docker-compose.yml.
+    Nginx Reverse Proxy: Containerized Nginx to act as the web-facing bouncer, protecting the internal Python application from slowloris attacks and abstracting port mapping from the host OS.
 
-    Reverse Proxying: Containerized Nginx instead of relying on host-OS installations, achieving true environment parity and protecting the Python application server from Slowloris attacks and direct internet exposure.
+Deployment Lifecycle
 
-    Internal Docker Networking: Leveraged Docker's internal DNS to allow containers to communicate securely via service names rather than hardcoded IPs.
+    Provision Infrastructure: Navigate to terraform/ and run terraform apply. This builds the VPC, subnets, gateways, and both EC2 instances (injecting boot logic via user_data).
 
-# 🚀 Deployment Instructions
+    Configure Pipeline: Copy the Terraform outputs (Web Public IP, DB Private IP) into GitHub Repository Secrets (EC2_HOST, REDIS_HOST).
 
-  1. **Provision Infrastructure:** Navigate to the terraform/ directory, update the variables, and run:
-     ***Bash***
-```
-    terraform init
-    terraform plan
-    terraform apply
-```
-  2. **Update Secrets:** Copy the outputted Elastic IP into your GitHub Repository Secrets as EC2_HOST.
+    Automated CI/CD Execution: Push code to GitHub. The pipeline will automatically connect, inject the private network routes, and spin up the distributed application.
 
-  3. **Deploy:** Push changes to the main branch. GitHub Actions will handle the SSH connection, code pull, and container orchestration automatically.
+    Teardown: Run terraform destroy to cleanly wipe all cloud resources and prevent idle billing. branch. GitHub Actions will handle the SSH connection, code pull, and container orchestration automatically.
