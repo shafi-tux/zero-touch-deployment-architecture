@@ -26,7 +26,19 @@ resource "aws_instance" "ubuntuserver" {
 	tags = {
 		Name = "prod-server"
 	}
-	user_data = file("setup.sh")
+	user_data = file("server_setup.sh")
+}
+
+resource "aws_instance" "dbserver" {
+	ami = data.aws_ami.ubuntu.id
+	instance_type = var.instance_size
+	subnet_id = aws_subnet.private_subnet.id
+	key_name = aws_key_pair.webserverkeys.id
+	vpc_security_group_ids = [aws_security_group.database_sg.id]
+	tags = {
+		Name = "database-server"
+	}
+	user_data = file("db_setup.sh")
 }
 
 resource "aws_eip" "static_ip" {
