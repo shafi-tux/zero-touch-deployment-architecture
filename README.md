@@ -1,4 +1,4 @@
-# Zero-Touch Cloud Deployment Architecture
+# Zero-Touch AWS Cloud Deployment: Distributed 2-Tier Architecture
 
 ![Terraform](https://img.shields.io/badge/terraform-%235835CC.svg?style=for-the-badge&logo=terraform&logoColor=white)
 ![AWS](https://img.shields.io/badge/AWS-%23FF9900.svg?style=for-the-badge&logo=amazon-aws&logoColor=white)
@@ -7,33 +7,40 @@
 ![Nginx](https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white)
 
 ## Overview
-This repository contains a fully automated, Infrastructure-as-Code (IaC) deployment of a containerized Python web application. It demonstrates modern DevOps practices, moving from code push to a live production environment on AWS without any manual server intervention ("Zero-Touch").
+This repository contains a fully automated, Infrastructure-as-Code (IaC) deployment of a containerized Python web application. It demonstrates a production-grade **Network Segmented Architecture**, separating public-facing web servers from private database servers, all orchestrated via GitHub Actions CI/CD.
 
 ## System Architecture
 
 ```mermaid
 flowchart LR
-  Dev([Developer]) -- Git Push --> GH[GitHub Repository]
-  GH -- Triggers --> GHA[GitHub Actions CI/CD]
-  GHA -- SSH & Docker Compose --> AWS
-
+  Dev([Developer]) -- Git Push --> GH[GitHub Actions CI/CD]
+  
   subgraph AWS [AWS Cloud Environment]
     subgraph VPC [Custom VPC: 10.0.0.0/16]
       IGW[Internet Gateway]
+      
       subgraph PubSub [Public Subnet: 10.0.1.0/24]
-        EC2[Ubuntu EC2 + Elastic IP]
-        subgraph Docker [Docker Engine]
-          Nginx[Nginx Container :80]
-          App[Python App Container :8000]
-          Redis[Redis Container :6379]
-          Nginx -->|Proxy Pass| App
-          App -->|Cache| Redis
+        NAT[NAT Gateway + EIP]
+        subgraph WebEC2 [Web Server / Bastion Host]
+          Nginx[Nginx Proxy :80] --> App[Python App :8000]
         end
       end
+
+      subgraph PrivSub [Private Subnet: 10.0.2.0/24]
+        subgraph DBEC2 [Database Server]
+          Redis[Redis Cache :6379]
+        end
+      end
+
       IGW --- PubSub
+      App -- TCP 6379 --> Redis
+      Redis -- Outbound Updates --> NAT
+      NAT --> IGW
     end
   end
+  
   Internet((Internet)) -->|HTTP: 80| IGW
+  GH -. SSH & Env Injection .-> WebEC2
 ```
 # 🛠 Core Competencies & Technologies Demonstrated
 1. **Infrastructure as Code (Terraform)**
