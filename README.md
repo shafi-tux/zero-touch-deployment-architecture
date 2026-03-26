@@ -73,4 +73,4 @@ flowchart LR
 
   _Automated CI/CD Execution_: Push code to GitHub. The pipeline will automatically connect, inject the private network routes, and spin up the distributed application.
 
-    Teardown: Run terraform destroy to cleanly wipe all cloud resources and prevent idle billing. branch. GitHub Actions will handle the SSH connection, code pull, and container orchestration automatically.
+  _Teardown_: Run terraform destroy to cleanly wipe all cloud resources and prevent idle billing. branch. GitHub Actions will handle the SSH connection, code pull, and container orchestration automatically.
