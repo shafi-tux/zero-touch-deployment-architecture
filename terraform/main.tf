@@ -1,3 +1,19 @@
+terraform {
+	required_providers {
+		aws = {
+			version = "~> 6.0"
+			source = "hashicorp/aws"
+		}
+	}
+	backend "s3" {
+		bucket = "sb-660348065846-us-east-1-an"
+		key = "network-segmentation/terraform.tfstate"
+		region = "us-east-1"
+		use_lockfile = true
+		encrypt = true
+	}
+}
+
 provider "aws" {
 	region = var.aws_region
 }

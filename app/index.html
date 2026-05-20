@@ -3,52 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dockerized Dashboard</title>
+    <title>DevOps Architecture Dashboard</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #1e1e2f; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .card { background: #2a2a40; padding: 2.5rem; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.5); text-align: center; max-width: 450px; width: 100%; border-top: 4px solid #00ffcc; }
-        h1 { color: #00ffcc; margin-bottom: 5px;}
-        p { color: #a0a0b0; font-size: 0.9rem; margin-bottom: 25px; }
-        button { background: #00d2ff; color: #1e1e2f; border: none; padding: 12px 24px; font-size: 1rem; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; box-shadow: 0 4px 10px rgba(0, 210, 255, 0.3); }
-        button:hover { background: #00a8cc; transform: translateY(-2px); }
-        button:active { transform: translateY(0); }
-        .data-box { background: #151521; padding: 20px; border-radius: 8px; margin-top: 25px; font-family: 'Courier New', Courier, monospace; text-align: left; font-size: 0.95rem; border: 1px solid #3a3a50; }
-        .highlight { color: #00d2ff; font-weight: bold; }
-        .key { color: #ff79c6; }
-        .redis-text { color: #ff4444; font-weight: bold; }
+        :root { --bg: #0f172a; --panel: #1e293b; --text: #e2e8f0; --accent: #38bdf8; --success: #4ade80; --redis: #f87171; }
+        body { font-family: 'Inter', system-ui, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 2rem; display: flex; flex-direction: column; align-items: center; }
+        .dashboard { max-width: 900px; width: 100%; }
+        .header { text-align: center; margin-bottom: 2rem; border-bottom: 1px solid #334155; padding-bottom: 1rem; }
+        h1 { color: var(--accent); margin: 0 0 0.5rem 0; font-size: 2rem; }
+        .architecture-map { display: flex; gap: 2rem; margin-bottom: 2rem; flex-wrap: wrap; justify-content: center; }
+        .subnet { background: var(--panel); border: 2px dashed #475569; padding: 1.5rem; border-radius: 12px; flex: 1; min-width: 300px; position: relative; }
+        .subnet-title { position: absolute; top: -12px; left: 20px; background: var(--bg); padding: 0 10px; color: #94a3b8; font-size: 0.9rem; font-weight: bold; }
+        .node { background: #334155; padding: 1rem; border-radius: 8px; margin-top: 1rem; border-left: 4px solid var(--accent); }
+        .node.db { border-left-color: var(--redis); }
+        .telemetry-panel { background: #020617; padding: 1.5rem; border-radius: 12px; border: 1px solid #334155; font-family: monospace; }
+        .stat-row { display: flex; justify-content: space-between; margin-bottom: 0.8rem; border-bottom: 1px solid #1e293b; padding-bottom: 0.4rem; }
+        .stat-label { color: #94a3b8; }
+        .stat-value { font-weight: bold; color: var(--success); }
+        .stat-value.highlight { color: var(--accent); }
+        .stat-value.redis { color: var(--redis); }
+        button { background: var(--accent); color: #0f172a; border: none; padding: 0.8rem 1.5rem; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; margin-top: 1rem; width: 100%; }
+        button:hover { opacity: 0.9; transform: translateY(-1px); }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>🐳 Dockerized Dashboard</h1>
-        <p>V2.0 - Python + Redis Multi-Tier Stack</p>
-	<p>Fully automated CI/CD pipeline </p>
-	<p>Cloud Deployment to AWS </p>
-        <button onclick="fetchTelemetry()">Fetch Server Telemetry</button>
-        <div id="statusBox" class="data-box" style="display: none;"></div>
+    <div class="dashboard">
+        <div class="header">
+            <h1>🌐 AWS Zero-Touch Deployment</h1>
+            <p>Live Infrastructure Telemetry Dashboard</p>
+        </div>
+
+        <div class="architecture-map">
+            <div class="subnet">
+                <div class="subnet-title">Public Subnet (10.0.1.0/24)</div>
+                <div class="node">
+                    <strong>🟢 Web Server (EC2)</strong><br>
+                    <small>Nginx Reverse Proxy &rarr; Python API</small>
+                </div>
+            </div>
+            <div class="subnet">
+                <div class="subnet-title">Private Subnet (10.0.2.0/24)</div>
+                <div class="node db">
+                    <strong>🔴 Database Server (EC2)</strong><br>
+                    <small>Redis Cache (Zero-Trust Security Group)</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="telemetry-panel">
+            <div class="stat-row">
+                <span class="stat-label">System Status:</span>
+                <span class="stat-value" id="status">Awaiting check...</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Uptime:</span>
+                <span class="stat-value highlight" id="uptime">--</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Client IP Address:</span>
+                <span class="stat-value highlight" id="clientIp">--</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Redis Cache Hits:</span>
+                <span class="stat-value redis" id="visitorCount">--</span>
+            </div>
+            <button onclick="fetchTelemetry()">Refresh Telemetry</button>
+        </div>
     </div>
 
     <script>
         async function fetchTelemetry() {
-            const box = document.getElementById('statusBox');
-            box.style.display = 'block';
-            box.innerHTML = "Querying backend API...";
-            
+            document.getElementById('status').innerText = "Querying backend API...";
             try {
                 const response = await fetch('/api/status');
                 const data = await response.json();
                 
-                box.innerHTML = `
-                    <span class="key">Service:</span> <span class="highlight">${data.status.toUpperCase()}</span><br><br>
-                    <span class="key">Uptime:</span> <span class="highlight">${data.uptime_seconds} seconds</span><br><br>
-                    <span class="key">Client IP:</span> <span class="highlight">${data.client_ip}</span><br><br>
-                    <span class="key">Redis Hits:</span> <span class="redis-text">${data.visitor_count}</span><br><br>
-                    <span class="key">Server Time:</span> <span class="highlight">${data.server_time}</span>
-                `;
+                document.getElementById('status').innerText = data.status.toUpperCase();
+                document.getElementById('uptime').innerText = data.uptime_seconds + " seconds";
+                document.getElementById('clientIp').innerText = data.client_ip;
+                document.getElementById('visitorCount').innerText = data.visitor_count;
             } catch (err) {
-                box.innerHTML = `<span style="color: #ff4d4d;">Critical Error: API Unreachable.</span>`;
+                document.getElementById('status').innerText = "CRITICAL ERROR: API Unreachable";
+                document.getElementById('status').style.color = "red";
             }
         }
+        // Fetch immediately on load
+        fetchTelemetry();
     </script>
 </body>
 </html>
