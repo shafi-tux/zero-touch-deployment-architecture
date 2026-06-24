@@ -13,7 +13,7 @@
 
 ## Project Summary
 
-Production-grade, fully automated AWS infrastructure that provisions a **network-segmented VPC**, deploys a **containerized application** across two EC2 instances, and delivers code changes to production via a **zero-touch CI/CD pipeline** — all without a single manual step after `git push`.
+Production-style, fully automated AWS infrastructure that provisions a **network-segmented VPC**, deploys a **containerized application** across two EC2 instances, and delivers code changes to production via a **zero-touch CI/CD pipeline** — all without a single manual step after `git push`.
 
 This project demonstrates hands-on proficiency in:
 
@@ -92,7 +92,7 @@ flowchart TB
 
 ## Key Engineering Decisions
 
-### 1. Network Segmentation & Zero-Trust Security
+### 1. Network Segmentation & Least-Privilege Access
 
 Designed a custom VPC (`10.0.0.0/16`) with strict network boundaries:
 
@@ -122,6 +122,8 @@ flowchart LR
 ```
 
 The database Security Group does **not** reference any IP range or CIDR block — it exclusively accepts connections from the web server's Security Group ID. This ensures that even if the private subnet is accidentally exposed, traffic without the correct security group origin is dropped.
+
+> **Note:** SSH (:22) on the web server is scoped to `0.0.0.0/0` for demo convenience. In a real deployment this would be restricted to a known CIDR or replaced with AWS Systems Manager Session Manager — see [Future Improvements](#future-improvements).
 
 ### 2. CI/CD Pipeline — Zero-Touch Deployment
 
@@ -365,3 +367,15 @@ on:
 | **Nginx** | Reverse proxy configuration, upstream proxying, `X-Real-IP` header passthrough |
 | **Linux Administration** | EC2 user data bootstrap scripts, Docker daemon setup, `cloud-init` integration |
 | **Security Practices** | No hardcoded secrets in source, `.env` runtime injection, encrypted state storage, `.gitignore` for sensitive files |
+
+---
+
+## Future Improvements
+
+This project intentionally favors clarity over completeness — the goal was to demonstrate the core mechanics of a zero-touch pipeline, not to ship a fully hardened production system. Next steps to close that gap:
+
+- **High Availability** — Multi-AZ subnet placement, Application Load Balancer + Auto Scaling Group in place of a single web server instance
+- **Observability** — CloudWatch metrics and alarms, centralized logging, a health-check endpoint wired into the ALB
+- **Access Hardening** — Replace direct SSH (`0.0.0.0/0` on :22) with AWS Systems Manager Session Manager, removing the open inbound rule and long-lived key pairs entirely
+- **Secrets Management** — Move from GitHub Actions secrets to AWS Secrets Manager or SSM Parameter Store for runtime secret retrieval
+- **Pipeline Hardening** — Add `terraform validate`, `tflint`, and `checkov` static analysis as required CI checks before `apply`
