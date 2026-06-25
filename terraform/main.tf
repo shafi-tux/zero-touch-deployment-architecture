@@ -55,6 +55,7 @@ resource "aws_instance" "dbserver" {
 		Name = "database-server"
 	}
 	user_data = file("db_setup.sh")
+	depends_on = [aws_route_table_association.nat_rt_assoc]
 }
 
 resource "aws_eip" "static_ip" {
