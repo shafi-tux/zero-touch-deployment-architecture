@@ -1,93 +1,606 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DevOps Architecture Dashboard</title>
-    <style>
-        :root { --bg: #0f172a; --panel: #1e293b; --text: #e2e8f0; --accent: #38bdf8; --success: #4ade80; --redis: #f87171; }
-        body { font-family: 'Inter', system-ui, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 2rem; display: flex; flex-direction: column; align-items: center; }
-        .dashboard { max-width: 900px; width: 100%; }
-        .header { text-align: center; margin-bottom: 2rem; border-bottom: 1px solid #334155; padding-bottom: 1rem; }
-        h1 { color: var(--accent); margin: 0 0 0.5rem 0; font-size: 2rem; }
-        .architecture-map { display: flex; gap: 2rem; margin-bottom: 2rem; flex-wrap: wrap; justify-content: center; }
-        .subnet { background: var(--panel); border: 2px dashed #475569; padding: 1.5rem; border-radius: 12px; flex: 1; min-width: 300px; position: relative; }
-        .subnet-title { position: absolute; top: -12px; left: 20px; background: var(--bg); padding: 0 10px; color: #94a3b8; font-size: 0.9rem; font-weight: bold; }
-        .node { background: #334155; padding: 1rem; border-radius: 8px; margin-top: 1rem; border-left: 4px solid var(--accent); }
-        .node.db { border-left-color: var(--redis); }
-        .telemetry-panel { background: #020617; padding: 1.5rem; border-radius: 12px; border: 1px solid #334155; font-family: monospace; }
-        .stat-row { display: flex; justify-content: space-between; margin-bottom: 0.8rem; border-bottom: 1px solid #1e293b; padding-bottom: 0.4rem; }
-        .stat-label { color: #94a3b8; }
-        .stat-value { font-weight: bold; color: var(--success); }
-        .stat-value.highlight { color: var(--accent); }
-        .stat-value.redis { color: var(--redis); }
-        button { background: var(--accent); color: #0f172a; border: none; padding: 0.8rem 1.5rem; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; margin-top: 1rem; width: 100%; }
-        button:hover { opacity: 0.9; transform: translateY(-1px); }
-    </style>
+    <title>Zero-Touch Cloud Deployment | DevOps Portfolio — Terraform, Docker, AWS CI/CD</title>
+    <meta name="description"
+        content="Production-grade AWS infrastructure portfolio project demonstrating Infrastructure as Code (Terraform), containerized deployments (Docker), CI/CD automation (GitHub Actions), network segmentation, and zero-touch deployment pipelines.">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-    <div class="dashboard">
-        <div class="header">
-            <h1>🌐 AWS Zero-Touch Deployment</h1>
-            <p>Live Infrastructure Telemetry Dashboard</p>
-        </div>
+    <!-- Animated Background -->
+    <canvas id="bgCanvas"></canvas>
 
-        <div class="architecture-map">
-            <div class="subnet">
-                <div class="subnet-title">Public Subnet (10.0.1.0/24)</div>
-                <div class="node">
-                    <strong>🟢 Web Server (EC2)</strong><br>
-                    <small>Nginx Reverse Proxy &rarr; Python API</small>
+    <!-- Navigation -->
+    <nav id="mainNav">
+        <div class="nav-brand">
+            <span class="nav-icon">◆</span>
+            <span class="nav-title">ZeroDeploy</span>
+        </div>
+        <div class="nav-links">
+            <a href="#hero" class="nav-link active" data-section="hero">Overview</a>
+            <a href="#architecture" class="nav-link" data-section="architecture">Architecture</a>
+            <a href="#pipeline" class="nav-link" data-section="pipeline">Pipeline</a>
+            <a href="#infra" class="nav-link" data-section="infra">Infrastructure</a>
+            <a href="#security" class="nav-link" data-section="security">Security</a>
+            <a href="#telemetry" class="nav-link" data-section="telemetry">Telemetry</a>
+        </div>
+        <button id="themeToggle" class="theme-btn" title="Toggle Theme">
+            <span class="theme-icon">◐</span>
+        </button>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero" class="section hero-section">
+        <div class="hero-content">
+            <div class="hero-badge">PRODUCTION-GRADE INFRASTRUCTURE</div>
+            <h1 class="hero-title">
+                <span class="gradient-text">Zero-Touch</span><br>
+                Cloud Deployment
+            </h1>
+            <p class="hero-subtitle">
+                End-to-end automated AWS infrastructure featuring network-segmented VPC architecture,
+                containerized application deployment via Docker Compose, and a fully hands-off CI/CD
+                pipeline powered by GitHub Actions — from <code>git push</code> to production with zero manual intervention.
+            </p>
+            <div class="hero-tech-stack">
+                <div class="tech-pill" data-tooltip="Infrastructure as Code">
+                    <i class="devicon-terraform-plain"></i> Terraform
+                </div>
+                <div class="tech-pill" data-tooltip="Cloud Provider">
+                    <i class="devicon-amazonwebservices-plain-wordmark"></i> AWS
+                </div>
+                <div class="tech-pill" data-tooltip="Containerization">
+                    <i class="devicon-docker-plain"></i> Docker
+                </div>
+                <div class="tech-pill" data-tooltip="CI/CD Automation">
+                    <i class="devicon-githubactions-plain"></i> GitHub Actions
+                </div>
+                <div class="tech-pill" data-tooltip="Reverse Proxy / Load Balancer">
+                    <i class="devicon-nginx-original"></i> Nginx
+                </div>
+                <div class="tech-pill" data-tooltip="In-Memory Data Store">
+                    <i class="devicon-redis-plain"></i> Redis
+                </div>
+                <div class="tech-pill" data-tooltip="Application Runtime">
+                    <i class="devicon-python-plain"></i> Python
+                </div>
+                <div class="tech-pill" data-tooltip="Operating System">
+                    <i class="devicon-ubuntu-plain"></i> Ubuntu
                 </div>
             </div>
-            <div class="subnet">
-                <div class="subnet-title">Private Subnet (10.0.2.0/24)</div>
-                <div class="node db">
-                    <strong>🔴 Database Server (EC2)</strong><br>
-                    <small>Redis Cache (Zero-Trust Security Group)</small>
+            <div class="hero-stats">
+                <div class="stat-card">
+                    <span class="stat-number" data-count="2">0</span>
+                    <span class="stat-label">Tier Architecture</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" data-count="4">0</span>
+                    <span class="stat-label">Security Groups</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" data-count="0">0</span>
+                    <span class="stat-label">Manual Steps</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" data-count="100">0</span>
+                    <span class="stat-label">% Automated</span>
                 </div>
             </div>
         </div>
-
-        <div class="telemetry-panel">
-            <div class="stat-row">
-                <span class="stat-label">System Status:</span>
-                <span class="stat-value" id="status">Awaiting check...</span>
-            </div>
-            <div class="stat-row">
-                <span class="stat-label">Uptime:</span>
-                <span class="stat-value highlight" id="uptime">--</span>
-            </div>
-            <div class="stat-row">
-                <span class="stat-label">Client IP Address:</span>
-                <span class="stat-value highlight" id="clientIp">--</span>
-            </div>
-            <div class="stat-row">
-                <span class="stat-label">Redis Cache Hits:</span>
-                <span class="stat-value redis" id="visitorCount">--</span>
-            </div>
-            <button onclick="fetchTelemetry()">Refresh Telemetry</button>
+        <div class="scroll-indicator">
+            <span>Scroll to explore</span>
+            <div class="scroll-arrow"></div>
         </div>
-    </div>
+    </section>
 
+    <!-- Architecture Section -->
+    <section id="architecture" class="section">
+        <div class="section-header">
+            <span class="section-tag">SYSTEM DESIGN</span>
+            <h2 class="section-title">Cloud Architecture</h2>
+            <p class="section-desc">Interactive topology of the network-segmented, 2-tier AWS environment provisioned entirely via Terraform</p>
+        </div>
+        <div class="arch-container">
+            <div id="archDiagram" class="arch-diagram">
+                <!-- Internet -->
+                <div class="arch-node internet-node" id="nodeInternet" data-info="internet">
+                    <div class="node-pulse"></div>
+                    <div class="node-icon"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10A15.3 15.3 0 0112 2z"/></svg></div>
+                    <div class="node-label">Internet</div>
+                </div>
+
+                <!-- AWS Cloud Boundary -->
+                <div class="aws-boundary">
+                    <div class="boundary-label">AWS Cloud Environment</div>
+
+                    <!-- VPC Boundary -->
+                    <div class="vpc-boundary">
+                        <div class="boundary-label vpc-label">Custom VPC — 10.0.0.0/16</div>
+
+                        <!-- IGW -->
+                        <div class="arch-node igw-node" id="nodeIGW" data-info="igw">
+                            <div class="node-icon"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 3h6v4H9zM4 17h16v4H4zM7 7v10M17 7v10M12 7v10"/></svg></div>
+                            <div class="node-label">Internet Gateway</div>
+                        </div>
+
+                        <!-- Public Subnet -->
+                        <div class="subnet public-subnet">
+                            <div class="subnet-label">Public Subnet — 10.0.1.0/24</div>
+                            <div class="subnet-nodes">
+                                <div class="arch-node nat-node" id="nodeNAT" data-info="nat">
+                                    <div class="node-icon"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 12h8m0 0l-3-3m3 3l-3 3M3 12a9 9 0 1118 0 9 9 0 01-18 0z"/></svg></div>
+                                    <div class="node-label">NAT Gateway</div>
+                                    <div class="node-detail">+ Elastic IP</div>
+                                </div>
+                                <div class="arch-node web-node" id="nodeWeb" data-info="web">
+                                    <div class="node-pulse"></div>
+                                    <div class="node-icon"><i class="devicon-amazonwebservices-plain-wordmark" style="font-size:1.8rem"></i></div>
+                                    <div class="node-label">Web Server (EC2)</div>
+                                    <div class="node-detail">Bastion Host</div>
+                                    <div class="node-services">
+                                        <span class="service-tag nginx"><i class="devicon-nginx-original"></i> :80</span>
+                                        <span class="service-tag python"><i class="devicon-python-plain"></i> :8000</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Private Subnet -->
+                        <div class="subnet private-subnet">
+                            <div class="subnet-label">Private Subnet — 10.0.2.0/24</div>
+                            <div class="subnet-nodes">
+                                <div class="arch-node db-node" id="nodeDB" data-info="db">
+                                    <div class="node-icon"><i class="devicon-amazonwebservices-plain-wordmark" style="font-size:1.8rem"></i></div>
+                                    <div class="node-label">Database Server (EC2)</div>
+                                    <div class="node-services">
+                                        <span class="service-tag redis"><i class="devicon-redis-plain"></i> :6379</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GitHub Actions -->
+                <div class="arch-node github-node" id="nodeGitHub" data-info="github">
+                    <div class="node-pulse"></div>
+                    <div class="node-icon"><i class="devicon-githubactions-plain" style="font-size:1.8rem"></i></div>
+                    <div class="node-label">GitHub Actions</div>
+                    <div class="node-detail">CI/CD Automation</div>
+                </div>
+
+                <!-- Connection Lines (SVG overlay) -->
+                <svg class="arch-connections" id="archSVG">
+                    <defs>
+                        <marker id="arrowHead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                            <polygon points="0 0, 8 3, 0 6" fill="var(--accent)" />
+                        </marker>
+                        <linearGradient id="flowGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:var(--accent);stop-opacity:0.2" />
+                            <stop offset="50%" style="stop-color:var(--accent);stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:var(--accent);stop-opacity:0.2" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+
+            <!-- Info Panel -->
+            <div id="infoPanel" class="info-panel">
+                <div class="info-header">
+                    <h3 id="infoPanelTitle">Select a Component</h3>
+                    <button id="closeInfo" class="close-info">✕</button>
+                </div>
+                <div id="infoPanelContent" class="info-content">
+                    <p class="info-placeholder">Click any node in the architecture diagram to view detailed information
+                        about that component.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pipeline Section -->
+    <section id="pipeline" class="section">
+        <div class="section-header">
+            <span class="section-tag">CI/CD AUTOMATION</span>
+            <h2 class="section-title">Deployment Pipeline</h2>
+            <p class="section-desc">Scroll to trace the fully automated CI/CD workflow — from <code>git push</code> to live production in under 60 seconds</p>
+        </div>
+        <div class="pipeline-container">
+            <div class="pipeline-track">
+                <div class="pipeline-line"></div>
+                <div class="pipeline-progress" id="pipelineProgress"></div>
+            </div>
+            <div class="pipeline-steps">
+                <div class="pipeline-step" data-step="1">
+                    <div class="step-marker">
+                        <span class="step-number">01</span>
+                    </div>
+                    <div class="step-content">
+                        <div class="step-icon"><i class="devicon-git-plain"></i></div>
+                        <h3>Source Control Trigger</h3>
+                        <p>A <code>git push</code> to the <code>main</code> branch automatically triggers the GitHub Actions workflow — no manual intervention required.</p>
+                        <div class="step-file">
+                            <span class="file-label">Trigger</span>
+                            <code>on: push → branches: [main]</code>
+                        </div>
+                    </div>
+                </div>
+                <div class="pipeline-step" data-step="2">
+                    <div class="step-marker">
+                        <span class="step-number">02</span>
+                    </div>
+                    <div class="step-content">
+                        <div class="step-icon"><i class="devicon-github-original"></i></div>
+                        <h3>Repository Checkout</h3>
+                        <p>The CI runner provisions a clean Ubuntu environment and clones the repository via <code>actions/checkout@v6</code>.</p>
+                        <div class="step-file">
+                            <span class="file-label">Action</span>
+                            <code>actions/checkout@v6</code>
+                        </div>
+                    </div>
+                </div>
+                <div class="pipeline-step" data-step="3">
+                    <div class="step-marker">
+                        <span class="step-number">03</span>
+                    </div>
+                    <div class="step-content">
+                        <div class="step-icon"><i class="devicon-ssh-original"></i></div>
+                        <h3>Secure Remote Access</h3>
+                        <p>The pipeline authenticates to the production EC2 instance via SSH using a private key securely stored in GitHub Secrets.</p>
+                        <div class="step-file">
+                            <span class="file-label">Secrets</span>
+                            <code>EC2_HOST, EC2_SSH_KEY, REDIS_HOST</code>
+                        </div>
+                    </div>
+                </div>
+                <div class="pipeline-step" data-step="4">
+                    <div class="step-marker">
+                        <span class="step-number">04</span>
+                    </div>
+                    <div class="step-content">
+                        <div class="step-icon"><i class="devicon-linux-plain"></i></div>
+                        <h3>Runtime Configuration</h3>
+                        <p>The private IP of the database server is dynamically injected as a <code>.env</code> variable, ensuring the application connects to the correct backend at deploy time.</p>
+                        <div class="step-file">
+                            <span class="file-label">Command</span>
+                            <code>echo "REDIS_HOST=$REDIS_HOST" > .env</code>
+                        </div>
+                    </div>
+                </div>
+                <div class="pipeline-step" data-step="5">
+                    <div class="step-marker">
+                        <span class="step-number">05</span>
+                    </div>
+                    <div class="step-content">
+                        <div class="step-icon"><i class="devicon-docker-plain"></i></div>
+                        <h3>Container Orchestration</h3>
+                        <p>Docker Compose builds fresh images and orchestrates the Nginx reverse proxy and Python application containers with zero-downtime deployment.</p>
+                        <div class="step-file">
+                            <span class="file-label">Command</span>
+                            <code>docker compose up --detach --build</code>
+                        </div>
+                    </div>
+                </div>
+                <div class="pipeline-step" data-step="6">
+                    <div class="step-marker">
+                        <span class="step-number">06</span>
+                    </div>
+                    <div class="step-content">
+                        <div class="step-icon"><i class="devicon-nginx-original"></i></div>
+                        <h3>Production Traffic Serving</h3>
+                        <p>The application is live and serving HTTP traffic through the Nginx reverse proxy on port 80 — fully operational, zero manual steps.</p>
+                        <div class="step-file">
+                            <span class="file-label">Status</span>
+                            <code>HTTP 200 — Production Ready</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pipeline-scroll-hint">Scroll to progress the pipeline</div>
+        </div>
+    </section>
+
+    <!-- Infrastructure Section -->
+    <section id="infra" class="section">
+        <div class="section-header">
+            <span class="section-tag">INFRASTRUCTURE AS CODE</span>
+            <h2 class="section-title">Terraform Resources</h2>
+            <p class="section-desc">Every resource is declaratively defined in Terraform — version-controlled, peer-reviewed, and fully reproducible</p>
+        </div>
+        <div class="infra-grid">
+            <div class="infra-card" data-category="compute">
+                <div class="infra-card-glow"></div>
+                <div class="infra-icon"><i class="devicon-amazonwebservices-plain-wordmark"></i></div>
+                <h3>EC2 — Web Server</h3>
+                <div class="infra-details">
+                    <div class="detail-row"><span class="detail-key">AMI</span><span class="detail-val">Ubuntu 22.04
+                            LTS</span></div>
+                    <div class="detail-row"><span class="detail-key">Instance</span><span
+                            class="detail-val">t3.micro</span></div>
+                    <div class="detail-row"><span class="detail-key">Subnet</span><span class="detail-val">Public
+                            (10.0.1.0/24)</span></div>
+                    <div class="detail-row"><span class="detail-key">Role</span><span class="detail-val">Web + Bastion
+                            Host</span></div>
+                </div>
+                <div class="infra-tag">main.tf</div>
+            </div>
+            <div class="infra-card" data-category="compute">
+                <div class="infra-card-glow"></div>
+                <div class="infra-icon"><i class="devicon-redis-plain"></i></div>
+                <h3>EC2 — Database Server</h3>
+                <div class="infra-details">
+                    <div class="detail-row"><span class="detail-key">AMI</span><span class="detail-val">Ubuntu 22.04
+                            LTS</span></div>
+                    <div class="detail-row"><span class="detail-key">Instance</span><span
+                            class="detail-val">t3.micro</span></div>
+                    <div class="detail-row"><span class="detail-key">Subnet</span><span class="detail-val">Private
+                            (10.0.2.0/24)</span></div>
+                    <div class="detail-row"><span class="detail-key">Service</span><span class="detail-val">Redis Cache
+                            :6379</span></div>
+                </div>
+                <div class="infra-tag">main.tf</div>
+            </div>
+            <div class="infra-card" data-category="network">
+                <div class="infra-card-glow"></div>
+                <div class="infra-icon"><i class="devicon-amazonwebservices-plain-wordmark"></i></div>
+                <h3>Custom VPC</h3>
+                <div class="infra-details">
+                    <div class="detail-row"><span class="detail-key">CIDR</span><span
+                            class="detail-val">10.0.0.0/16</span></div>
+                    <div class="detail-row"><span class="detail-key">DNS</span><span class="detail-val">Enabled</span>
+                    </div>
+                    <div class="detail-row"><span class="detail-key">Subnets</span><span class="detail-val">2 (Public +
+                            Private)</span></div>
+                    <div class="detail-row"><span class="detail-key">Region</span><span
+                            class="detail-val">us-east-1</span></div>
+                </div>
+                <div class="infra-tag">vpc.tf</div>
+            </div>
+            <div class="infra-card" data-category="network">
+                <div class="infra-card-glow"></div>
+                <div class="infra-icon"><svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 3h6v4H9zM4 17h16v4H4zM7 7v10M17 7v10M12 7v10"/></svg></div>
+                <h3>Gateways</h3>
+                <div class="infra-details">
+                    <div class="detail-row"><span class="detail-key">IGW</span><span class="detail-val">Public internet
+                            access</span></div>
+                    <div class="detail-row"><span class="detail-key">NAT GW</span><span class="detail-val">Private
+                            outbound only</span></div>
+                    <div class="detail-row"><span class="detail-key">EIPs</span><span class="detail-val">2 (NAT +
+                            Web)</span></div>
+                    <div class="detail-row"><span class="detail-key">Route Tables</span><span class="detail-val">2
+                            (Public + Private)</span></div>
+                </div>
+                <div class="infra-tag">vpc.tf</div>
+            </div>
+            <div class="infra-card" data-category="security">
+                <div class="infra-card-glow"></div>
+                <div class="infra-icon"><svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+                <h3>Security Groups</h3>
+                <div class="infra-details">
+                    <div class="detail-row"><span class="detail-key">Web SG</span><span class="detail-val">HTTP:80 +
+                            SSH:22 open</span></div>
+                    <div class="detail-row"><span class="detail-key">DB SG</span><span class="detail-val">Redis:6379
+                            from Web SG only</span></div>
+                    <div class="detail-row"><span class="detail-key">Model</span><span class="detail-val">Zero-Trust
+                            Chaining</span></div>
+                    <div class="detail-row"><span class="detail-key">Egress</span><span class="detail-val">All outbound
+                            allowed</span></div>
+                </div>
+                <div class="infra-tag">security_group.tf</div>
+            </div>
+            <div class="infra-card" data-category="container">
+                <div class="infra-card-glow"></div>
+                <div class="infra-icon"><i class="devicon-docker-plain"></i></div>
+                <h3>Docker Services</h3>
+                <div class="infra-details">
+                    <div class="detail-row"><span class="detail-key">Web</span><span class="detail-val">Python 3.12
+                            Alpine</span></div>
+                    <div class="detail-row"><span class="detail-key">Proxy</span><span class="detail-val">Nginx
+                            (latest)</span></div>
+                    <div class="detail-row"><span class="detail-key">DB</span><span class="detail-val">Redis
+                            (latest)</span></div>
+                    <div class="detail-row"><span class="detail-key">Compose</span><span class="detail-val">v3.8</span>
+                    </div>
+                </div>
+                <div class="infra-tag">docker-compose.yml</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Security Section -->
+    <section id="security" class="section">
+        <div class="section-header">
+            <span class="section-tag">ZERO-TRUST MODEL</span>
+            <h2 class="section-title">Security Architecture</h2>
+            <p class="section-desc">Defense-in-depth strategy implementing network segmentation, security group chaining, and least-privilege access control</p>
+        </div>
+        <div class="security-grid">
+            <div class="security-layer" data-layer="1">
+                <div class="layer-number">Layer 1</div>
+                <div class="layer-content">
+                    <h3>Edge — Internet Gateway</h3>
+                    <p>Only HTTP (port 80) and SSH (port 22) traffic is allowed inbound. All other ports are implicitly
+                        denied by AWS default rules.</p>
+                    <div class="rule-list">
+                        <div class="rule allow"><span class="rule-dir">IN</span> TCP :80 — HTTP <span
+                                class="rule-src">0.0.0.0/0</span></div>
+                        <div class="rule allow"><span class="rule-dir">IN</span> TCP :22 — SSH <span
+                                class="rule-src">0.0.0.0/0</span></div>
+                        <div class="rule deny"><span class="rule-dir">IN</span> All Other — DENIED</div>
+                    </div>
+                </div>
+            </div>
+            <div class="security-layer" data-layer="2">
+                <div class="layer-number">Layer 2</div>
+                <div class="layer-content">
+                    <h3>Network — Subnet Isolation</h3>
+                    <p>Database server sits in a private subnet with <strong>no public IP</strong> and no inbound
+                        internet route. Only the NAT gateway provides outbound access for system updates.</p>
+                    <div class="rule-list">
+                        <div class="rule allow"><span class="rule-dir">OUT</span> Private → NAT → Internet <span
+                                class="rule-src">Updates only</span></div>
+                        <div class="rule deny"><span class="rule-dir">IN</span> Internet → Private — BLOCKED</div>
+                    </div>
+                </div>
+            </div>
+            <div class="security-layer" data-layer="3">
+                <div class="layer-number">Layer 3</div>
+                <div class="layer-content">
+                    <h3>Application — Security Group Chaining</h3>
+                    <p>The database Security Group only accepts connections from the web server's specific Security
+                        Group ID — not from any IP range. This is the <strong>"Vault" architecture</strong>.</p>
+                    <div class="rule-list">
+                        <div class="rule allow"><span class="rule-dir">IN</span> TCP :6379 — Redis <span
+                                class="rule-src">sg-webserver</span></div>
+                        <div class="rule allow"><span class="rule-dir">IN</span> TCP :22 — SSH <span
+                                class="rule-src">sg-webserver</span></div>
+                        <div class="rule deny"><span class="rule-dir">IN</span> All Other Sources — DENIED</div>
+                    </div>
+                </div>
+            </div>
+            <div class="security-layer" data-layer="4">
+                <div class="layer-number">Layer 4</div>
+                <div class="layer-content">
+                    <h3>Transport — Reverse Proxy</h3>
+                    <p>Nginx acts as a gateway shielding the Python application from direct internet exposure. The app
+                        container only exposes port 8000 internally — never to the host.</p>
+                    <div class="rule-list">
+                        <div class="rule allow"><span class="rule-dir">→</span> Client → Nginx :80 → Python :8000</div>
+                        <div class="rule deny"><span class="rule-dir">✕</span> Client → Python :8000 — NOT EXPOSED</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Live Telemetry Section -->
+    <section id="telemetry" class="section">
+        <div class="section-header">
+            <span class="section-tag">LIVE INFRASTRUCTURE</span>
+            <h2 class="section-title">Live Telemetry</h2>
+            <p class="section-desc">Real-time system metrics pulled from the production backend API via the Nginx reverse proxy</p>
+        </div>
+        <div class="telemetry-wrapper">
+            <div class="telemetry-grid">
+                <div class="telemetry-card">
+                    <div class="telemetry-card-glow"></div>
+                    <div class="telemetry-icon">
+                        <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                    </div>
+                    <div class="telemetry-label">System Status</div>
+                    <div class="telemetry-value" id="telStatus">Awaiting check…</div>
+                </div>
+                <div class="telemetry-card">
+                    <div class="telemetry-card-glow"></div>
+                    <div class="telemetry-icon">
+                        <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20m10-10H2"/><circle cx="12" cy="12" r="10"/></svg>
+                    </div>
+                    <div class="telemetry-label">Server Uptime</div>
+                    <div class="telemetry-value telemetry-accent" id="telUptime">—</div>
+                </div>
+                <div class="telemetry-card">
+                    <div class="telemetry-card-glow"></div>
+                    <div class="telemetry-icon">
+                        <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.66 0 3-4.03 3-9s-1.34-9-3-9m0 18c-1.66 0-3-4.03-3-9s1.34-9 3-9m-9 9a9 9 0 019-9"/></svg>
+                    </div>
+                    <div class="telemetry-label">Client IP Address</div>
+                    <div class="telemetry-value telemetry-accent" id="telClientIp">—</div>
+                </div>
+                <div class="telemetry-card">
+                    <div class="telemetry-card-glow"></div>
+                    <div class="telemetry-icon">
+                        <i class="devicon-redis-plain" style="font-size:2rem"></i>
+                    </div>
+                    <div class="telemetry-label">Redis Cache Hits</div>
+                    <div class="telemetry-value telemetry-redis" id="telVisitorCount">—</div>
+                </div>
+            </div>
+            <div class="telemetry-actions">
+                <button id="refreshTelemetry" class="telemetry-btn">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>
+                    Refresh Telemetry
+                </button>
+                <div class="telemetry-status" id="telLastUpdate">Not yet fetched</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <span class="nav-icon">◆</span> ZeroDeploy Dashboard
+            </div>
+            <p>A DevOps portfolio project demonstrating production-grade cloud architecture, Infrastructure as Code, and CI/CD automation.</p>
+            <div class="footer-links">
+                <a href="https://github.com/netgeek7/zero-touch-deployment-architecture" target="_blank"
+                    rel="noopener">GitHub Repository ↗</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
     <script>
+        // ── Live Telemetry Fetch ──
         async function fetchTelemetry() {
-            document.getElementById('status').innerText = "Querying backend API...";
+            const statusEl = document.getElementById('telStatus');
+            const uptimeEl = document.getElementById('telUptime');
+            const ipEl = document.getElementById('telClientIp');
+            const countEl = document.getElementById('telVisitorCount');
+            const lastUpdate = document.getElementById('telLastUpdate');
+
+            if (statusEl) statusEl.textContent = 'Querying backend API…';
+            if (statusEl) statusEl.className = 'telemetry-value';
+
             try {
                 const response = await fetch('/api/status');
                 const data = await response.json();
-                
-                document.getElementById('status').innerText = data.status.toUpperCase();
-                document.getElementById('uptime').innerText = data.uptime_seconds + " seconds";
-                document.getElementById('clientIp').innerText = data.client_ip;
-                document.getElementById('visitorCount').innerText = data.visitor_count;
+
+                if (statusEl) {
+                    statusEl.textContent = data.status.toUpperCase();
+                    statusEl.className = 'telemetry-value telemetry-online';
+                }
+                if (uptimeEl) {
+                    const hrs = Math.floor(data.uptime_seconds / 3600);
+                    const mins = Math.floor((data.uptime_seconds % 3600) / 60);
+                    const secs = data.uptime_seconds % 60;
+                    uptimeEl.textContent = hrs > 0 ? `${hrs}h ${mins}m ${secs}s` : mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
+                }
+                if (ipEl) ipEl.textContent = data.client_ip;
+                if (countEl) countEl.textContent = data.visitor_count;
+                if (lastUpdate) lastUpdate.textContent = 'Updated: ' + data.server_time;
             } catch (err) {
-                document.getElementById('status').innerText = "CRITICAL ERROR: API Unreachable";
-                document.getElementById('status').style.color = "red";
+                if (statusEl) {
+                    statusEl.textContent = 'API UNREACHABLE';
+                    statusEl.className = 'telemetry-value telemetry-error';
+                }
+                if (lastUpdate) lastUpdate.textContent = 'Error: Could not reach /api/status';
             }
         }
-        // Fetch immediately on load
+
+        // Auto-refresh telemetry when section becomes visible
+        const telemetryObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) fetchTelemetry();
+            });
+        }, { threshold: 0.3 });
+        const telSection = document.getElementById('telemetry');
+        if (telSection) telemetryObserver.observe(telSection);
+
+        // Manual refresh button
+        document.getElementById('refreshTelemetry')?.addEventListener('click', fetchTelemetry);
+
+        // Initial fetch on page load
         fetchTelemetry();
     </script>
 </body>
+
 </html>

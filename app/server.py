@@ -12,6 +12,17 @@ BASE_DIR = Path(__file__).resolve().parent
 redis_ip = os.environ.get('REDIS_HOST', 'localhost')
 cache = redis.Redis(host=redis_ip, port=6379, db=0, decode_responses=True)
 
+# MIME type mapping for static file serving
+MIME_TYPES = {
+    '.html': 'text/html',
+    '.css': 'text/css',
+    '.js': 'application/javascript',
+    '.json': 'application/json',
+    '.svg': 'image/svg+xml',
+    '.png': 'image/png',
+    '.ico': 'image/x-icon',
+}
+
 class AppHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         real_ip = self.headers.get('X-Real-IP', 'Unknown / Bypassed Proxy')
@@ -48,6 +59,22 @@ class AppHandler(BaseHTTPRequestHandler):
                 "visitor_count": visitor_count
             }
             self.wfile.write(json.dumps(data).encode('utf-8'))
+
+        elif self.path in ('/style.css', '/script.js'):
+            # Serve static CSS and JS files from the same directory
+            file_path = BASE_DIR / self.path.lstrip('/')
+            suffix = file_path.suffix
+            mime = MIME_TYPES.get(suffix, 'application/octet-stream')
+            try:
+                self.send_response(200)
+                self.send_header('Content-type', mime)
+                self.end_headers()
+                with open(file_path, 'rb') as f:
+                    self.wfile.write(f.read())
+            except FileNotFoundError:
+                self.send_response(404)
+                self.end_headers()
+                self.wfile.write(b"404 - Not Found")
             
         else:
             self.send_response(404)

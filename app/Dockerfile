@@ -5,7 +5,7 @@ FROM python:3.12-alpine
 WORKDIR /app
 
 #copy the contents over
-COPY server.py index.html requirements.txt /app/
+COPY server.py index.html script.js style.css requirements.txt /app/
 
 #run the pip install command:
 RUN pip install --no-cache-dir -r requirements.txt
