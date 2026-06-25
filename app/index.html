@@ -271,7 +271,7 @@
                         <p>The private IP of the database server is dynamically injected as a <code>.env</code> variable, ensuring the application connects to the correct backend at deploy time.</p>
                         <div class="step-file">
                             <span class="file-label">Command</span>
-                            <code>echo "REDIS_HOST=" > .env</code>
+                            <code>echo "REDIS_HOST=$REDIS_HOST" > .env</code>
                         </div>
                     </div>
                 </div>
@@ -572,7 +572,7 @@
                     const hrs = Math.floor(data.uptime_seconds / 3600);
                     const mins = Math.floor((data.uptime_seconds % 3600) / 60);
                     const secs = data.uptime_seconds % 60;
-                    uptimeEl.textContent = hrs > 0 ?  : mins > 0 ?  : ;
+                    uptimeEl.textContent = hrs > 0 ? `${hrs}h ${mins}m ${secs}s` : mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
                 }
                 if (ipEl) ipEl.textContent = data.client_ip;
                 if (countEl) countEl.textContent = data.visitor_count;
