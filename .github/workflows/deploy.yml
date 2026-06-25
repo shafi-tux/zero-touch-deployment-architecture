@@ -28,7 +28,7 @@ jobs:
               cloud-init status --wait
               if [ ! -d ~/zero-touch-deployment-architecture ]
               then
-                  git clone https://github.com/netgeek7/zero-touch-deployment-architecture.git
+                  git clone https://github.com/shafi-tux/zero-touch-deployment-architecture.git
               fi
               cd ~/zero-touch-deployment-architecture
               git pull origin main

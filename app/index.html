@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zero-Touch Cloud Deployment | DevOps Portfolio — Terraform, Docker, AWS CI/CD</title>
     <meta name="description"
-        content="Production-grade AWS infrastructure portfolio project demonstrating Infrastructure as Code (Terraform), containerized deployments (Docker), CI/CD automation (GitHub Actions), network segmentation, and zero-touch deployment pipelines.">
+        content="Production-style AWS infrastructure portfolio project demonstrating Infrastructure as Code (Terraform), containerized deployments (Docker), CI/CD automation (GitHub Actions), network segmentation, and zero-touch deployment pipelines.">
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
         rel="stylesheet">
@@ -40,7 +40,7 @@
     <!-- Hero Section -->
     <section id="hero" class="section hero-section">
         <div class="hero-content">
-            <div class="hero-badge">PRODUCTION-GRADE INFRASTRUCTURE</div>
+            <div class="hero-badge">PRODUCTION-STYLE INFRASTRUCTURE</div>
             <h1 class="hero-title">
                 <span class="gradient-text">Zero-Touch</span><br>
                 Cloud Deployment
@@ -82,7 +82,7 @@
                     <span class="stat-label">Tier Architecture</span>
                 </div>
                 <div class="stat-card">
-                    <span class="stat-number" data-count="4">0</span>
+                    <span class="stat-number" data-count="2">0</span>
                     <span class="stat-label">Security Groups</span>
                 </div>
                 <div class="stat-card">
@@ -271,7 +271,7 @@
                         <p>The private IP of the database server is dynamically injected as a <code>.env</code> variable, ensuring the application connects to the correct backend at deploy time.</p>
                         <div class="step-file">
                             <span class="file-label">Command</span>
-                            <code>echo "REDIS_HOST=$REDIS_HOST" > .env</code>
+                            <code>echo "REDIS_HOST=" > .env</code>
                         </div>
                     </div>
                 </div>
@@ -389,7 +389,7 @@
                             SSH:22 open</span></div>
                     <div class="detail-row"><span class="detail-key">DB SG</span><span class="detail-val">Redis:6379
                             from Web SG only</span></div>
-                    <div class="detail-row"><span class="detail-key">Model</span><span class="detail-val">Zero-Trust
+                    <div class="detail-row"><span class="detail-key">Model</span><span class="detail-val">Least-Privilege
                             Chaining</span></div>
                     <div class="detail-row"><span class="detail-key">Egress</span><span class="detail-val">All outbound
                             allowed</span></div>
@@ -418,7 +418,7 @@
     <!-- Security Section -->
     <section id="security" class="section">
         <div class="section-header">
-            <span class="section-tag">ZERO-TRUST MODEL</span>
+            <span class="section-tag">LEAST-PRIVILEGE MODEL</span>
             <h2 class="section-title">Security Architecture</h2>
             <p class="section-desc">Defense-in-depth strategy implementing network segmentation, security group chaining, and least-privilege access control</p>
         </div>
@@ -456,7 +456,7 @@
                 <div class="layer-content">
                     <h3>Application — Security Group Chaining</h3>
                     <p>The database Security Group only accepts connections from the web server's specific Security
-                        Group ID — not from any IP range. This is the <strong>"Vault" architecture</strong>.</p>
+                        Group ID — not from any IP range.</p>
                     <div class="rule-list">
                         <div class="rule allow"><span class="rule-dir">IN</span> TCP :6379 — Redis <span
                                 class="rule-src">sg-webserver</span></div>
@@ -519,7 +519,7 @@
                     <div class="telemetry-icon">
                         <i class="devicon-redis-plain" style="font-size:2rem"></i>
                     </div>
-                    <div class="telemetry-label">Redis Cache Hits</div>
+                    <div class="telemetry-label">Total Visits</div>
                     <div class="telemetry-value telemetry-redis" id="telVisitorCount">—</div>
                 </div>
             </div>
@@ -539,9 +539,9 @@
             <div class="footer-brand">
                 <span class="nav-icon">◆</span> ZeroDeploy Dashboard
             </div>
-            <p>A DevOps portfolio project demonstrating production-grade cloud architecture, Infrastructure as Code, and CI/CD automation.</p>
+            <p>A DevOps portfolio project demonstrating production-style cloud architecture, Infrastructure as Code, and CI/CD automation.</p>
             <div class="footer-links">
-                <a href="https://github.com/netgeek7/zero-touch-deployment-architecture" target="_blank"
+                <a href="https://github.com/shafi-tux/zero-touch-deployment-architecture" target="_blank"
                     rel="noopener">GitHub Repository ↗</a>
             </div>
         </div>
@@ -572,7 +572,7 @@
                     const hrs = Math.floor(data.uptime_seconds / 3600);
                     const mins = Math.floor((data.uptime_seconds % 3600) / 60);
                     const secs = data.uptime_seconds % 60;
-                    uptimeEl.textContent = hrs > 0 ? `${hrs}h ${mins}m ${secs}s` : mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
+                    uptimeEl.textContent = hrs > 0 ?  : mins > 0 ?  : ;
                 }
                 if (ipEl) ipEl.textContent = data.client_ip;
                 if (countEl) countEl.textContent = data.visitor_count;
